@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { gql } from "apollo-boost";
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from "@apollo/react-hooks";
 
 import { config } from "../config";
 import { Header } from "../Components/Header";
-import { Loader } from '../Components/Common'
-import { BlogContainer } from '../Components/Blog'
-import { Card } from '../Components/Blog/Card'
+import { Loader } from "../Components/Common";
+import { BlogContainer } from "../Components/Blog";
+import { Card } from "../Components/Blog/Card";
 
 const GET_POSTS = gql`
 {
@@ -36,7 +36,7 @@ const GET_POSTS = gql`
     }
   }
 }
-`
+`;
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -45,11 +45,11 @@ const Blog = () => {
   useEffect(() => {
     if (!loading) {
       if (error) {
-        console.error(error)
+        console.error(error);
       }
 
       if (data) {
-        setPosts(data?.repository?.issues?.nodes)
+        setPosts(data?.repository?.issues?.nodes);
       }
     }
   }, [loading, error, data]);
@@ -58,16 +58,25 @@ const Blog = () => {
     <>
       <Header />
       <BlogContainer>
-        {
-          loading
-          ? <Loader />
-          : posts.map((v, i) => {
+        {loading ? (
+          <Loader />
+        ) : (
+          posts
+            .sort((a, b) => {
+              console.log(a.updatedAt);
+              console.log(b.updatedAt);
+              return (
+                new Date(b.updatedAt).getTime() -
+                new Date(a.updatedAt).getTime()
+              );
+            })
+            .map((v, i) => {
               return <Card blog={v} key={i} />;
             })
-        }
+        )}
       </BlogContainer>
     </>
   );
-}
+};
 
 export default Blog;
